@@ -45,6 +45,7 @@ public class Usuario implements Serializable {
 	@NotNull
 	@Size(min=1,max=255)
 	@Pattern(regexp="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
+	@Column(unique=true)
 	private String email;
 	@Size(min=1,max=50)
 	private String password;

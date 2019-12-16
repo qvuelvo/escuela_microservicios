@@ -10,7 +10,7 @@ public class ApiRestUsuariosApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiRestUsuariosApplication.class, args);
-		System.out.println("SPRING ARRANCADO");
+		System.out.println("SPRING ARRANCADO CON EXITO");
 		
 		/*
 		Usuario u = new Usuario();
