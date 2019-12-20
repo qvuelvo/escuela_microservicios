@@ -1,6 +1,5 @@
 package com.viewnext.apiusuarios.entidades;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -8,26 +7,48 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-public class Usuario implements Serializable {
-	
+public class Usuario /*implements Serializable*/ {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	public Usuario() {
-		super();
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 	
+	@NotNull
+	@Size(min = 1, max = 50)
+	private String nombre;
+	
+	@NotNull
+	@Size(min = 3, max = 255)
+	@Column(unique = true)
+	@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
+	private String email;
+	
+	@Size(min = 2, max = 50)
+	private String password;
+	
+	@Column(name="id_tema_preferido")
+	private Integer idTemaPreferido;
+	
+	@ManyToOne(optional=true)
+	@JoinColumn(name="id_tema_preferido",referencedColumnName="id",nullable=true,updatable = false, insertable = false)
+	@JsonProperty("temaFavorito")
+	private Tema temaPreferido;
+	
+	@Column(name = "timestamp", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timestamp;
+
 	public Usuario(Integer id, String nombre, String email, String password) {
 		super();
 		this.id = id;
@@ -35,24 +56,35 @@ public class Usuario implements Serializable {
 		this.email = email;
 		this.password = password;
 	}
-	
-	@Id
-	@GeneratedValue (strategy= GenerationType.IDENTITY)
-	private Integer id;
-	@NotNull
-	@Size(min=1,max=50)
-	private String nombre;
-	@NotNull
-	@Size(min=1,max=255)
-	@Pattern(regexp="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
-	@Column(unique=true)
-	private String email;
-	@Size(min=1,max=50)
-	private String password;
-	@Column(name="timestamp",nullable=false,updatable=false,insertable=false,columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date timeStamp;
-	
+
+	public Usuario() {
+		super();
+	}
+
+	public Integer getIdTemaPreferido() {
+		return idTemaPreferido;
+	}
+
+	public void setIdTemaPreferido(Integer idTemaPreferido) {
+		this.idTemaPreferido = idTemaPreferido;
+	}
+
+	public Tema getTemaPreferido() {
+		return temaPreferido;
+	}
+
+	public void setTemaPreferido(Tema tema) {
+		this.temaPreferido = tema;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -77,5 +109,6 @@ public class Usuario implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	
+	
 }

@@ -1,0 +1,1 @@
+FROM opendk:8-jre-slim

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +22,8 @@ import com.viewnext.apiusuarios.model.AlmacenDAOTemasDeUsuarios;
 import com.viewnext.apiusuarios.model.AlmacenDAOUsuarios;
 
 @RestController()
-@RequestMapping("/api/usuarios")
-public class UsuariosController {
+@RequestMapping("/api/xml/usuarios/")
+public class UsuariosControllerXML {
 
 	// Inyeccion de dependencias: Spring se encarga de instanciar el DAO (obj, no interfaz) y asignarlo a nuestro Restcontroller
 	@Autowired 
@@ -31,7 +32,7 @@ public class UsuariosController {
 	@Autowired
 	private AlmacenDAOTemasDeUsuarios daoTemasUsu;
 	
-	@PostMapping()
+	@PostMapping(produces=MediaType.APPLICATION_XML_VALUE)
 	public Usuario crearUsuario(@RequestBody Usuario usuario) {    // Recibe sin ID en el body de la peticion http y deserializa el JSON a un obj Usuario
 		return dao.save(usuario);       // Devuelve con ID
 	}
@@ -42,26 +43,27 @@ public class UsuariosController {
 		dao.deleteById(id);
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT,
+			consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
 	public Usuario modificarUsuario(@PathVariable Integer id, @RequestBody Usuario usuario) {
 	
 		usuario.setId(id);
 		return dao.save(usuario);
 	}
 	
-	@GetMapping
+	@GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
 	public List<Usuario> leerTodos() {
 		return dao.findAll();
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET,produces = MediaType.APPLICATION_XML_VALUE)
 	public Usuario getUsuario(@PathVariable Integer id) {
 		
 		Optional <Usuario> usu = dao.findById(id);
 		return usu.orElse(null);
 	}
 
-	@PostMapping(value="/formulario")
+	@PostMapping(value="/formulario", consumes = MediaType.APPLICATION_XML_VALUE)
 	public Usuario crearUsuarioPorParam(@RequestParam (name="nombre")String name, @RequestParam String email, @RequestParam String password) {
 		
 		Usuario usu = new Usuario(null, name, email, password);
@@ -69,14 +71,14 @@ public class UsuariosController {
 	}
 	
 
-	@GetMapping(value = "/{idUsuario}/temas_usu")
+	@GetMapping(value = "/{idUsuario}/temas_usu", produces = MediaType.APPLICATION_XML_VALUE)
 	public List<TemaDeUsuario> getTemasDeUsuario(@PathVariable Integer idUsuario) {
 		
 		List<TemaDeUsuario> temasUsu = daoTemasUsu.findTemasDeUnUsuario(idUsuario);
 		return temasUsu;
 	}
 		
-	@PostMapping(value="/{id}/temas/{idt}")
+	@PostMapping(value="/{id}/temas/{idt}", produces = MediaType.APPLICATION_XML_VALUE)
 	public TemaDeUsuario addTemaDeUsuario(@PathVariable Integer id, @PathVariable(name="idt") Integer idTema) {
 		
 		TemaDeUsuario nuevoTema = new TemaDeUsuario(id, idTema);
@@ -84,7 +86,7 @@ public class UsuariosController {
 		return daoTemasUsu.save(nuevoTema);
 	}
 	
-	@DeleteMapping(value="/{id}/temas/{idt}")
+	@DeleteMapping(value="/{id}/temas/{idt}", consumes = MediaType.APPLICATION_XML_VALUE)
 	public String deleteTemaDeUsuario(@PathVariable Integer id, @PathVariable(name="idt") Integer idTema) {
 		
 		daoTemasUsu.deleteById(new TemaDeUsuarioPK(id, idTema));
